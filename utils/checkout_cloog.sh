@@ -1,8 +1,5 @@
 #!/bin/sh
 
-CLOOG_HASH="2d8b7c6b43ee46fee978a57fa6877de49675f357"
-ISL_HASH="73f31ac8f5f9eba77ebe397d6d763407f10c741e"
-
 PWD=`pwd`
 
 check_command_line() {
@@ -68,9 +65,8 @@ then
   # Remove the existing CLooG and ISL dirs to avoid crashing older git versions.
   cd ${CLOOG_DIR}/..
   run rmdir "${CLOOG_DIR}"
-  run git clone http://repo.or.cz/r/cloog.git ${CLOOG_DIR}
-  run rmdir "${ISL_DIR}"
-  run git clone http://repo.or.cz/r/isl.git ${ISL_DIR}
+  run git clone https://github.com/codefireXperiment/toolchain_cloog-upstream ${CLOOG_DIR}
+  run git clone https://github.com/codefireXperiment/toolchain_isl-upstream ${ISL_DIR}
 fi
 
 echo :: Fetch versions required by Polly
@@ -78,14 +74,6 @@ run cd ${CLOOG_DIR}
 run git remote update
 run cd isl
 run git remote update
-
-echo :: Setting CLooG version
-run cd ${CLOOG_DIR}
-run git reset --hard "${CLOOG_HASH}"
-
-echo :: Setting isl version
-run cd ${ISL_DIR}
-run git reset --hard "${ISL_HASH}"
 
 echo :: Generating configure
 run cd ${CLOOG_DIR}
