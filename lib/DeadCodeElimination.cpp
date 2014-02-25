@@ -47,9 +47,10 @@ namespace {
 
 cl::opt<int> DCEPreciseSteps(
     "polly-dce-precise-steps",
-    cl::desc(
-        "The number of precise steps between two approximating iterations"),
-    cl::init(2));
+    cl::desc("The number of precise steps between two approximating "
+             "iterations. (A value of -1 schedules another approximation stage "
+             "before the actual dead code elimination."),
+    cl::init(-1));
 
 class DeadCodeElim : public ScopPass {
 
@@ -94,11 +95,17 @@ isl_union_set *DeadCodeElim::getLastWrites(__isl_take isl_union_map *Writes,
 /// combine a certain number of precise steps with one approximating step that
 /// simplifies the life set with an affine hull.
 bool DeadCodeElim::eliminateDeadCode(Scop &S, int PreciseSteps) {
-  isl_union_set *Live = this->getLastWrites(S.getWrites(), S.getSchedule());
-
   Dependences *D = &getAnalysis<Dependences>();
+
+  if (!D->hasValidDependences())
+    return false;
+
+  isl_union_set *Live = this->getLastWrites(S.getWrites(), S.getSchedule());
   isl_union_map *Dep = D->getDependences(Dependences::TYPE_RAW);
   Dep = isl_union_map_reverse(Dep);
+
+  if (PreciseSteps == -1)
+    Live = isl_union_set_affine_hull(Live);
 
   isl_union_set *OriginalDomain = S.getDomains();
   int Steps = 0;
