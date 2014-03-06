@@ -28,7 +28,6 @@ class DataLayout;
 using namespace llvm;
 
 namespace polly {
-class MayAliasSetInfo;
 
 //===---------------------------------------------------------------------===//
 /// @brief A memory access described by a SCEV expression and the access type.
@@ -111,7 +110,7 @@ typedef std::map<const Loop *, const SCEV *> LoopBoundMapType;
 /// Mapping BBs to its condition constrains
 typedef std::map<const BasicBlock *, BBCond> BBCondMapType;
 
-typedef std::vector<std::pair<IRAccess, Instruction *> > AccFuncSetType;
+typedef std::vector<std::pair<IRAccess, Instruction *>> AccFuncSetType;
 typedef std::map<const BasicBlock *, AccFuncSetType> AccFuncMapType;
 
 //===---------------------------------------------------------------------===//
@@ -132,9 +131,6 @@ class TempScop {
 
   // Access function of bbs.
   const AccFuncMapType &AccFuncMap;
-
-  // The alias information about this SCoP.
-  MayAliasSetInfo *MayASInfo;
 
   friend class TempScopInfo;
 
